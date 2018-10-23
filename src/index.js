@@ -152,22 +152,40 @@ const setFilmData = () => {
 
 const getActor2 = (error, actor2) => {
   console.log(actor2);
-  actor2Data = actor2.data.names[0];
-  sessionStorage.setItem(name2, JSON.stringify(actor2Data));
-  setFilmData();
+  if ('error' in actor2){
+    if(actor2['error']['code'] === 213){
+      d3.select('#resultsPara').html(`Unable to find "${name2}", please try again.`);
+    } else {
+      d3.select('#resultsPara').html(`Error loading data occurred, please try again.`);
+    }
+    d3.select('.loader').style('display', 'none');
+  } else {
+    actor2Data = actor2.data.names[0];
+    sessionStorage.setItem(name2, JSON.stringify(actor2Data));
+    setFilmData();
+  }
 }
 
 const getActor1 = (error, actor1) => {
   console.log(actor1);
-  actor1Data = actor1.data.names[0];
-  sessionStorage.setItem(name1, JSON.stringify(actor1Data));
-  if(sessionStorage.getItem(name2)){
-    actor2Data = JSON.parse(sessionStorage.getItem(name2));
-    setFilmData();
+  if ('error' in actor1){
+    if(actor1['error']['code'] === 213){
+      d3.select('#resultsPara').html(`Unable to find "${name1}", please try again.`);
+    } else {
+      d3.select('#resultsPara').html(`Error loading data occurred, please try again.`);
+    }
+    d3.select('.loader').style('display', 'none');
   } else {
-    d3.queue()
-      .defer(d3.json, `https://cors-anywhere.herokuapp.com/http://www.myapifilms.com/imdb/idIMDB?token=14b59da6-a984-4d6c-80cc-9327ae12ff06&name=${encodeURI(name2)}&format=json&filmography=1&limit=1&uniqueName=1`)
-      .await(getActor2);
+    actor1Data = actor1.data.names[0];
+    sessionStorage.setItem(name1, JSON.stringify(actor1Data));
+    if(sessionStorage.getItem(name2)){
+      actor2Data = JSON.parse(sessionStorage.getItem(name2));
+      setFilmData();
+    } else {
+      d3.queue()
+        .defer(d3.json, `https://cors-anywhere.herokuapp.com/http://www.myapifilms.com/imdb/idIMDB?token=14b59da6-a984-4d6c-80cc-9327ae12ff06&name=${encodeURI(name2)}&format=json&filmography=1&limit=1&uniqueName=1`)
+        .await(getActor2);
+    }
   }
 }
 
@@ -215,25 +233,18 @@ d3.select('#findActors').on('submit', d => {
 });
 
 d3.selectAll('input.acting').on('focus', (d, i, nodes) => {
-  console.log('focus', nodes[i].parentNode, d3.select(nodes[i]));
   if(d3.select(nodes[i]).property('value').length > 0){
     d3.select(nodes[i].parentNode).classed('show-ex', true);
   }
 });
 
 d3.selectAll('input.acting').on('keyup', (d, i, nodes) => {
-  console.log('focus', nodes[i].parentNode, d3.select(nodes[i]));
   if(d3.select(nodes[i]).property('value').length > 0){
     d3.select(nodes[i].parentNode).classed('show-ex', true);
   } else {
     d3.select(nodes[i].parentNode).classed('show-ex', false);
   }
 });
-//
-// d3.selectAll('input.acting').on('blur', (d, i, nodes) => {
-//   console.log('blur', nodes[i], d3.select(nodes[i]));
-//   d3.select(nodes[i].parentNode).classed('show-ex', false);
-// });
 
 d3.selectAll('.del').on('click', (d, i, nodes) => {
   d3.select(nodes[i].parentNode).select('input').property('value', '');
