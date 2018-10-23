@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Fugaz+One|Roboto+Mono:400,400i|Work+Sans:400,500,700,900');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i|Work+Sans:400,500,700,900');
 
 $break-width: 500px;
 
@@ -138,6 +138,10 @@ input{
       0% { opacity: 0; }
      50% { opacity: 0; }
     100% { opacity: 1; }
+}
+
+ul{
+  list-style-type: none;
 }
 
 #resultsList{
