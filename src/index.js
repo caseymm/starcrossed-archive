@@ -101,7 +101,7 @@ const resultsList = (overlap, justMissed) => {
     d3.select('#justMissed').append('p').html(justMissedStr);
   }
   if(showAsteriskDesc){
-    d3.select('#asterisk').style('display', 'inline-block');
+    d3.select('#asterisk').style('display', 'block');
   }
 }
 
