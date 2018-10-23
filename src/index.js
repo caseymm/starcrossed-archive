@@ -10,7 +10,16 @@ let name1 = '',
 
 
 let actor1Roles = [],
-    actor2Roles = [];
+    actor2Roles = [],
+    getListEmoji;
+
+const titleCase = (str) => {
+  let splitStr = str.toLowerCase().split(' ');
+  for (let i = 0; i < splitStr.length; i++) {
+     splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+  }
+  return splitStr.join(' ');
+}
 
 const returnYears = (array) => {
   if(array.length > 1){
@@ -25,29 +34,112 @@ const returnYears = (array) => {
   }
 }
 
+const resultsPara = (ct) => {
+  let substr = `starred together ${ct} times`;
+  if(ct === 0){
+    substr = `never starred together`;
+  } else if(ct === 1){
+    substr = `starred together ${ct} time`;
+  }
+  let parStr = `${actor1Data.name} and ${actor2Data.name} have ${substr}.`
+  d3.select('#resultsPara').append('p').html(parStr);
+}
+
+// const getListEmoji = () => {
+//   return `${actor1Data['filmographies'][0]['section']}${actor2Data['filmographies'][0]['section']}`;
+// }
+
+const figureYears = (array) => {
+  if(array.length === 1){
+    return String(array[0]);
+  } else {
+    return `${String(array[0])} - ${String(array[array.length - 1])}`;
+  }
+}
+
+const grammarPls = (justMissed) => {
+  if(justMissed.length === 1){
+    return justMissed[0];
+  } else if(justMissed.length === 2){
+    return justMissed.join(' and ');
+  } else {
+    justMissed[justMissed.length - 1] = `and ${justMissed[justMissed.length - 1]}`;
+    return justMissed.join(', ');
+  }
+}
+
+let showAsteriskDesc = false;
+
+const isTV = (remarks) => {
+  let ct = 0;
+  if(remarks){
+    remarks.forEach(remark => {
+      if(remark.match('(TV Series)')){
+        ct ++;
+      }
+    })
+  }
+  if(ct > 0){
+    showAsteriskDesc = true;
+    return '<span>*</span>';
+  } else {
+    return '';
+  }
+}
+
+const resultsList = (overlap, justMissed) => {
+  console.log(overlap, justMissed)
+  d3.select('#resultsList').classed(getListEmoji, true)
+    .selectAll('li')
+    .data(overlap)
+    .enter()
+    .append('li')
+    .html(d => { return `${d[0].title} (${figureYears(d[1])})${isTV(d[0].remarks)}`;});
+
+  let justMissedStr = `${actor1Data.name} and ${actor2Data.name} have both starred in ${grammarPls(justMissed)}, but did not appear together.`
+  if(justMissed.length > 0){
+    d3.select('#justMissed').append('p').html(justMissedStr);
+  }
+  if(showAsteriskDesc){
+    d3.select('#asterisk').style('display', 'inline-block');
+  }
+}
+
 const compare = (ids1, ids2) => {
+  let ct = 0;
   let intersect = _.intersection(ids1, ids2);
+  let overlap = [],
+      justMissed = [];
   intersect.forEach(id => {
     let a1 = _.findWhere(actor1Roles, {'imdbid': id});
     let a2 = _.findWhere(actor2Roles, {'imdbid': id});
     let overlapYears = _.intersection(returnYears(a1.year.split('-')), returnYears(a2.year.split('-')));
     if(overlapYears.length > 0){
       console.log(a1, a2, overlapYears);
+      overlap.push([a1, overlapYears]);
+      ct ++;
     } else {
       console.log(`both starred in ${a1.title}, but years did not overlap`)
+      justMissed.push(a1.title);
     }
   })
+  resultsPara(ct);
+  resultsList(overlap, justMissed);
 }
 
 const setFilmData = () => {
+  d3.select('.loader').style('display', 'none');
   console.log(actor1Data['urlPhoto'], actor2Data['urlPhoto']);
   [actor1Data, actor2Data].forEach((actorData, idx) => {
+    let roleStr;
     let actorRoles = [];
     ["Actor", "Actress"].forEach(role => {
       if(actorRoles.length < 1){
         actorRoles = _.findWhere(actorData.filmographies, {section: role}) || [];
+        roleStr = role;
       }
     });
+    getListEmoji += roleStr;
     if(idx === 0){
       actor1Roles = actorRoles['filmography'];
     } else {
@@ -74,14 +166,22 @@ const getActor1 = (error, actor1) => {
     setFilmData();
   } else {
     d3.queue()
-      .defer(d3.json, `https://cors-anywhere.herokuapp.com/http://www.myapifilms.com/imdb/idIMDB?token=14b59da6-a984-4d6c-80cc-9327ae12ff06&name=${name2}&format=json&filmography=1&limit=1&uniqueName=1`)
+      .defer(d3.json, `https://cors-anywhere.herokuapp.com/http://www.myapifilms.com/imdb/idIMDB?token=14b59da6-a984-4d6c-80cc-9327ae12ff06&name=${encodeURI(name2)}&format=json&filmography=1&limit=1&uniqueName=1`)
       .await(getActor2);
   }
 }
 
 const submitActors = (nameA, nameB) => {
-  name1 = nameA;
-  name2 = nameB;
+  d3.select('.loader').style('display', 'inline-block');
+  d3.select('#resultsPara').html('');
+  d3.select('#resultsList').attr('class', '').html('');
+  d3.select('#justMissed').html('');
+  showAsteriskDesc = false;
+  d3.select('#asterisk').style('display', 'none');
+  getListEmoji = '';
+  name1 = nameA.toLowerCase();
+  name2 = nameB.toLowerCase();
+  console.log(name1, name2);
   if(sessionStorage.getItem(name1)){
     actor1Data = JSON.parse(sessionStorage.getItem(name1));
     if(sessionStorage.getItem(name2)){
@@ -89,14 +189,30 @@ const submitActors = (nameA, nameB) => {
       setFilmData();
     } else {
       d3.queue()
-        .defer(d3.json, `https://cors-anywhere.herokuapp.com/http://www.myapifilms.com/imdb/idIMDB?token=14b59da6-a984-4d6c-80cc-9327ae12ff06&name=${name2}&format=json&filmography=1&limit=1&uniqueName=1`)
+        .defer(d3.json, `https://cors-anywhere.herokuapp.com/http://www.myapifilms.com/imdb/idIMDB?token=14b59da6-a984-4d6c-80cc-9327ae12ff06&name=${encodeURI(name2)}&format=json&filmography=1&limit=1&uniqueName=1`)
         .await(getActor2);
     }
   } else {
     d3.queue()
-      .defer(d3.json, `https://cors-anywhere.herokuapp.com/http://www.myapifilms.com/imdb/idIMDB?token=14b59da6-a984-4d6c-80cc-9327ae12ff06&name=${name1}&format=json&filmography=1&limit=1&uniqueName=1`)
+      .defer(d3.json, `https://cors-anywhere.herokuapp.com/http://www.myapifilms.com/imdb/idIMDB?token=14b59da6-a984-4d6c-80cc-9327ae12ff06&name=${encodeURI(name1)}&format=json&filmography=1&limit=1&uniqueName=1`)
       .await(getActor1);
   }
 }
 
-submitActors('Evan Peters', 'Jessica Lange');
+d3.select('#findActors').on('submit', d => {
+  d3.event.preventDefault();
+  console.log('submitted', d, d3.event)
+  let act1 = d3.select('#actor1').property('value');
+  let act2 = d3.select('#actor2').property('value');
+  window.location.hash = `#${encodeURI(act1)}+${encodeURI(act2)}`;
+  submitActors(act1, act2);
+})
+
+if(window.location.hash.length > 1){
+  let actorArray = window.location.hash.replace('#', '').split('+');
+  d3.select('#actor1').property('value', decodeURI(actorArray[0]));
+  d3.select('#actor2').property('value', decodeURI(actorArray[1]));
+  submitActors(decodeURI(actorArray[0]), decodeURI(actorArray[1]));
+} else {
+  submitActors('Jessica Lange', 'Sarah Paulson');
+}

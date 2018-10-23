@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-35670323-4"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-35670323-4');
+  </script>
   <meta charset="UTF-8">
   <title>starcrossed</title>
   <link href="https://api.mapbox.com/mapbox-assembly/v0.20.0/assembly.min.css" rel="stylesheet">
@@ -27,7 +37,27 @@
 
 </head>
 <body>
-  <div id="content"></div>
+  <div id="title"><span>✨</span>starcrossed</div>
+  <div id="content">
+    <form id="findActors">
+      <input type="text" id="actor1" value="Jessica Lange">
+      <div class="ex">x</div>
+      <input type="text" id="actor2" value="Sarah Paulson">
+      <!-- <div id="submit">🔮 submit 🔮</div> -->
+      <input id="submit" type="submit" value="🔮 submit 🔮">
+    </form>
+
+    <div class="loader">loading
+      <span class="one">.</span>
+      <span class="two">.</span>
+      <span class="three">.</span>
+    </div>
+
+    <div id="resultsPara"></div>
+    <ul id="resultsList"></ul>
+    <div id="asterisk"><span>*</span> Though these two appeared in this show during the same year, they may not have starred in the same episode(s).</div>
+    <div id="justMissed"></div>
+  </div>
   <script src="build/bundle.js"></script>
 </body>
 </html>
