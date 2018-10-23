@@ -39,10 +39,16 @@
 <body>
   <div id="title"><span>✨</span>starcrossed</div>
   <div id="content">
-    <form id="findActors">
-      <input type="text" id="actor1" value="Jessica Lange">
+    <form id="findActors" autocomplete="off">
+      <div class="input-wrapper show-ex">
+        <input type="text" class="acting" id="actor1" value="">
+        <span class="del">✕</span>
+      </div>
       <div class="ex">x</div>
-      <input type="text" id="actor2" value="Sarah Paulson">
+      <div class="input-wrapper show-ex">
+        <input type="text" class="acting" id="actor2" value="">
+        <span class="del">✕</span>
+      </div>
       <!-- <div id="submit">🔮 submit 🔮</div> -->
       <input id="submit" type="submit" value="🔮 submit 🔮">
     </form>

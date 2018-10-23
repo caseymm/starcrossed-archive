@@ -31,13 +31,14 @@ input{
   background-color: rgba(0,0,0,0);
   border: 0px solid #42f489;
   border-bottom-width: 5px;
+  -webkit-appearance: none;
+  border-radius: 0px;
   font-size: 40px;
   color: #fff;
   font-family: 'Work Sans', sans-serif;
   font-weight: 500;
   display: block;
   width: 100%;
-  max-width: 450px;
   margin: 50px auto;
   text-align: center;
   @media(max-width: $break-width){
@@ -50,8 +51,30 @@ input{
   }
 }
 
+.del{
+  display: none;
+  height: 0px;
+}
+
+.input-wrapper{
+  width: 100%;
+  max-width: 450px;
+  margin: auto;
+  &.show-ex{
+    .del{
+      display: inline-block;
+      position: relative;
+      float: right;
+      top: -110px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+  }
+}
+
 .ex{
   font-size: 40px;
+  clear: both;
   @media(max-width: $break-width){
     font-size: 30px;
   }
@@ -60,11 +83,13 @@ input{
 #submit{
   background-color: #42f489;
   font-size: 18px;
-  padding: 6px 5px 0px;
-  display: inline-block;
+  padding: 6px 5px;
+  display: block;
   cursor: pointer;
   width: auto;
   color: #000;
+  border-bottom-width: 0px;
+  clear: both;
 }
 
 .loader {
@@ -122,34 +147,38 @@ input{
   text-align: left;
   &.ActressActor{
     :before{
-      content: '👫';
+      // content: '👫';
+      content: '⭐️';
       display: inline-block;
       margin-right: 5px;
-      vertical-align: middle;
+      vertical-align: text-top;
     }
   }
   &.ActorActress{
     :before{
-      content: '👫';
+      // content: '👫';
+      content: '⭐️';
       display: inline-block;
       margin-right: 5px;
-      vertical-align: middle;
+      vertical-align: text-top;
     }
   }
   &.ActorActor{
     :before{
-      content: '👬';
+      // content: '👬';
+      content: '⭐️';
       display: inline-block;
       margin-right: 5px;
-      vertical-align: middle;
+      vertical-align: text-top;
     }
   }
   &.ActressActress{
     :before{
-      content: '👭';
+      // content: '👭';
+      content: '⭐️';
       display: inline-block;
       margin-right: 5px;
-      vertical-align: middle;
+      vertical-align: text-top;
     }
   }
 }
