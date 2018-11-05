@@ -248,6 +248,7 @@ d3.selectAll('input.acting').on('keyup', (d, i, nodes) => {
 
 d3.selectAll('.del').on('click', (d, i, nodes) => {
   d3.select(nodes[i].parentNode).select('input').property('value', '');
+  d3.select(nodes[i].parentNode).select('input').node().focus();
   d3.select(nodes[i].parentNode).classed('show-ex', false);
 });
 

@@ -44,6 +44,7 @@ input{
   @media(max-width: $break-width){
     font-size: 30px;
     margin: 30px auto;
+    max-width: 347px;
   }
   &:focus {outline:none;}
   &#submit{
