@@ -150,12 +150,17 @@ ul{
   width: auto;
   display: inline-block;
   text-align: left;
+  padding-inline-start: 0px;
+  li{
+    padding-left: 26px;
+  }
   &.ActressActor{
     :before{
       // content: '👫';
       content: '⭐️';
       display: inline-block;
       margin-right: 5px;
+      margin-left: -26px;
       // vertical-align: text-top;
     }
   }
@@ -165,6 +170,7 @@ ul{
       content: '⭐️';
       display: inline-block;
       margin-right: 5px;
+      margin-left: -26px;
       // vertical-align: text-top;
     }
   }
@@ -174,6 +180,7 @@ ul{
       content: '⭐️';
       display: inline-block;
       margin-right: 5px;
+      margin-left: -26px;
       // vertical-align: text-top;
     }
   }
@@ -183,6 +190,7 @@ ul{
       content: '⭐️';
       display: inline-block;
       margin-right: 5px;
+      margin-left: -26px;
       // vertical-align: text-top;
     }
   }
@@ -199,6 +207,7 @@ ul{
 #resultsList.ActorActress li span,
 #resultsList.ActorActor li span,
 #resultsList.ActressActress li span {
+  margin-left: 26px;
   top: -6px;
   left: -4px;
   position: relative;
